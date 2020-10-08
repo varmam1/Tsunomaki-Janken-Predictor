@@ -9,18 +9,13 @@ scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 def main():
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
-    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+    # os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
     api_service_name = "youtube"
     api_version = "v3"
-    client_secrets_file = "client_secret.json"
 
-    # Get credentials and create an API client
-    flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
-        client_secrets_file, scopes)
-    credentials = flow.run_console()
     youtube = googleapiclient.discovery.build(
-        api_service_name, api_version, credentials=credentials)
+        api_service_name, api_version, developerKey=os.environ["API_KEY"])
 
     request = youtube.channels().list(
         part="snippet,contentDetails,statistics",
@@ -28,7 +23,7 @@ def main():
     )
     response = request.execute()
 
-    print(response)
+    print(response['contentDetails']['subscriberCount'])
 
 if __name__ == "__main__":
     main()
