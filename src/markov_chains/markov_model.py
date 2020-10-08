@@ -36,6 +36,9 @@ def prediction(lastMove, model):
         lastMove: A string which has what the last move played was. (String)
         model: A dictionary mapping the last move to a dictionary which maps the possible moves to their probabilities
             (String -> (String -> float))
+    
+    Returns:
+        A string of what's the next string to appear
 
     """
     return random.choices(list(model[lastMove].keys()), weights=model[lastMove].values())[0]
