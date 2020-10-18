@@ -27,12 +27,27 @@ def getAllUploadsFromWatame():
     # *DO NOT* leave this option enabled in production.
     # os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-    request = youtube.playlistItems().list(
+    response = youtube.playlistItems().list(
         part="snippet,contentDetails",
-        maxResults=50,
+        maxResults="50",
         playlistId=uploads_playlist
-    )
-    return request.execute()
+    ).execute()
+    nextPageToken = response.get('nextPageToken')
+    while True:
+        nextPage = youtube.playlistItems().list(
+            part="snippet",
+            playlistId=uploads_playlist,
+            maxResults="50",
+            pageToken=nextPageToken
+            ).execute()
+        
+        response['items'] = response['items'] + nextPage['items']
+
+        if 'nextPageToken' not in nextPage:
+            break
+        else:
+            nextPageToken = nextPage.get('nextPageToken')
+    return response
 
 def getWatameNoUta(videos):
     """
